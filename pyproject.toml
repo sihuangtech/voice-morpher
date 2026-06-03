@@ -1,0 +1,37 @@
+[project]
+name = "voice-morpher"
+version = "0.1.0"
+description = "Local-first voice conversion MVP for Apple Silicon"
+readme = "README.md"
+authors = [
+    { name = "斯黄", email = "cyx20110508@163.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "gradio>=6.15.2",
+    "librosa>=0.11.0",
+    "numpy>=2.4.6",
+    "pydantic-settings>=2.14.1",
+    "soundfile>=0.13.1",
+]
+
+[project.scripts]
+voice-morpher = "cli:main"
+
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+py-modules = ["audio", "backends", "cli", "config", "jobs", "web"]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3",
+    "ruff>=0.15.15",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
