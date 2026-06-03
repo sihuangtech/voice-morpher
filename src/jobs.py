@@ -8,6 +8,7 @@ from pathlib import Path
 from audio import preprocess_audio, probe_audio
 from backends import ConversionRequest, get_backend
 from config import settings
+from voice_profiles import get_voice_profile
 
 
 @dataclass
@@ -38,7 +39,13 @@ def run_audio_to_audio(source_path: str, reference_path: str, backend_name: str)
     return _run_audio_to_audio_paths(raw_source, raw_reference, backend_name, job_id, job_path, work_path)
 
 
-def run_text_to_speech(reference_path: str, text: str, backend_name: str) -> JobResult:
+def run_text_to_speech(
+    reference_path: str | None,
+    text: str,
+    prompt_text: str,
+    backend_name: str,
+    voice_profile_key: str = "__upload__",
+) -> JobResult:
     job_id = uuid.uuid4().hex
     job_path = settings.job_dir / job_id
     raw_path = job_path / "raw"
@@ -46,11 +53,19 @@ def run_text_to_speech(reference_path: str, text: str, backend_name: str) -> Job
     raw_path.mkdir(parents=True, exist_ok=True)
     work_path.mkdir(parents=True, exist_ok=True)
 
-    raw_reference = _copy_local_audio(
-        Path(reference_path), raw_path / f"reference{Path(reference_path).suffix}"
-    )
-
     try:
+        if voice_profile_key != "__upload__":
+            profile = get_voice_profile(voice_profile_key)
+            reference_source = profile.reference_path
+            prompt_text = profile.prompt_text
+        elif reference_path:
+            reference_source = Path(reference_path)
+        else:
+            raise ValueError("Reference audio or cloned voice profile is required")
+
+        raw_reference = _copy_local_audio(
+            reference_source, raw_path / f"reference{reference_source.suffix}"
+        )
         if not text.strip():
             raise ValueError("Text is required")
         _validate_audio(raw_reference)
@@ -64,6 +79,7 @@ def run_text_to_speech(reference_path: str, text: str, backend_name: str) -> Job
                 output_wav=output_wav,
                 reference_wav=reference_wav,
                 text=text.strip(),
+                prompt_text=prompt_text.strip(),
             )
         )
         return JobResult(

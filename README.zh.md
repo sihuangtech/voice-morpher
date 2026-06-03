@@ -10,13 +10,14 @@ Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权�
 
 - 将源音频转换成目标人物音色，并尽量保留源音频的语速、停顿和节奏。
 - 根据目标人物参考音频和文本生成克隆语音。
-- 在 WebUI 中下载支持的 Hugging Face 模型快照。
-- 通过命令模板配置模型后端，不需要修改应用代码。
+- 在 WebUI 中下载支持的 Hugging Face 或 ModelScope 模型快照。
+- 在 WebUI 中把参考音频保存成可复用音色。
+- 优先使用 WebUI 内置流程，命令模板后端保留给高级自定义环境。
 - 将运行数据、外部模型仓库和下载权重放在源码目录之外。
 
 ## 当前状态
 
-这是一个 MVP。应用流程、音频预处理、Gradio 界面、模型清单和 CLI 后端适配已经实现。真实模型推理依赖你单独安装对应模型项目，并通过环境变量把推理命令接进来。
+这是一个 MVP。应用流程、音频预处理、Gradio 界面、音色库、模型清单、模型下载管理和后端适配已经实现。
 
 默认的 `passthrough` 后端不依赖任何模型。它会把预处理后的源音频直接复制成输出，用于在安装真实模型前测试 UI 和流程。
 
@@ -25,7 +26,7 @@ Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权�
 | 流程 | 输入 | 输出 | 推荐后端 |
 | --- | --- | --- | --- |
 | 音频换音色 | 源音频 + 目标参考音频 | 转换后的音频 | `seed_vc_cli` |
-| 文本克隆配音 | 目标参考音频 + 文本 | 生成语音 | `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
+| 文本克隆配音 | 目标参考音频 + 文本 | 生成语音 | `cosyvoice3_builtin`, `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
 | 流程测试 | 源音频 + 目标参考音频 | 复制源音频 | `passthrough` |
 
 ## 环境要求
@@ -61,6 +62,7 @@ VOICE_MORPHER_PORT=8001 uv run python main.py
 Gradio 界面包含：
 
 - **音频换音色**：上传源音频和目标人物参考音频。
+- **音色克隆**：把目标人物参考音频保存成可复用音色。
 - **文本克隆配音**：上传目标人物参考音频并输入文本。
 - **模型下载**：把配置好的 Hugging Face 或 ModelScope 模型快照下载到 `models/`。
 - **模型配置**：查看 CLI 后端是否已配置。
@@ -91,6 +93,15 @@ models/Fun-CosyVoice3-0.5B-2512/
 
 WebUI 中可以选择下载源。Hugging Face 对所有已配置模型可用；ModelScope 只有在模型条目里配置了 `modelscope_id` 时可用。
 
+内置 CosyVoice3 后端仍然会检查本地是否存在官方 CosyVoice 仓库：
+
+```text
+external/CosyVoice/
+models/Fun-CosyVoice3-0.5B-2512/
+```
+
+本项目不再负责克隆仓库。要使用内置 CosyVoice3 后端，请你手动安装官方 CosyVoice 仓库。
+
 ## 后端配置
 
 如果你更喜欢用配置文件，可以复制：
@@ -118,6 +129,15 @@ uv run python main.py
 如果 Seed-VC 的 CLI 输出目录而不是单个 wav 文件，后续需要加一个 wrapper 适配。
 
 ### CosyVoice3
+
+推荐的应用流程：
+
+1. 在 **音色克隆** 中保存一个音色。
+2. 在 **模型下载** 中下载 CosyVoice3 模型。
+3. 手动把官方 CosyVoice 仓库安装到 `external/CosyVoice`。
+4. 打开 **文本克隆配音**，选择保存好的音色，并选择 `CosyVoice3 Built-in`。
+
+命令模板后端仍然保留，适合自定义环境：
 
 ```bash
 VOICE_MORPHER_COSYVOICE3_COMMAND='python cosyvoice3_infer.py --prompt-audio {reference} --text {text} --output {output}' \
@@ -149,7 +169,6 @@ uv run python main.py
 ├── src/
 │   ├── audio.py
 │   ├── backends.py
-│   ├── cli.py
 │   ├── config.py
 │   ├── jobs.py
 │   ├── model_downloads.py

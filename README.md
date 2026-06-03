@@ -10,13 +10,14 @@ Voice Morpher is built for local demos on Apple Silicon first. It does not bundl
 
 - Convert source audio into a target speaker's timbre while preserving source rhythm and pauses as much as possible.
 - Generate cloned speech from text and a target speaker reference audio.
-- Download supported Hugging Face model snapshots from the WebUI.
-- Configure model backends through command templates instead of changing application code.
+- Download supported Hugging Face or ModelScope model snapshots from the WebUI.
+- Clone reusable voice profiles from reference audio in the WebUI.
+- Use built-in WebUI flows first, with command-template backends kept for advanced setups.
 - Keep runtime data, external model repos, and downloaded weights outside the source tree.
 
 ## Current Status
 
-This is an MVP. The application flow, audio preprocessing, Gradio interface, model catalog, and CLI backend adapters are implemented. Real model inference depends on installing the target model projects separately and wiring their commands through environment variables.
+This is an MVP. The application flow, audio preprocessing, Gradio interface, voice profile library, model catalog, model download management, and backend adapters are implemented.
 
 The default `passthrough` backend is intentionally model-free. It copies the preprocessed source audio to the output so the UI and pipeline can be tested before installing any model.
 
@@ -25,7 +26,7 @@ The default `passthrough` backend is intentionally model-free. It copies the pre
 | Workflow | Input | Output | Recommended backend |
 | --- | --- | --- | --- |
 | Voice conversion | Source audio + target reference audio | Converted audio | `seed_vc_cli` |
-| TTS voice cloning | Target reference audio + text | Generated speech | `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
+| TTS voice cloning | Target reference audio + text | Generated speech | `cosyvoice3_builtin`, `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
 | Pipeline test | Source audio + target reference audio | Copied source audio | `passthrough` |
 
 ## Requirements
@@ -61,6 +62,7 @@ VOICE_MORPHER_PORT=8001 uv run python main.py
 The Gradio interface includes:
 
 - **Audio Voice Conversion**: upload source audio and target reference audio.
+- **Voice Clone Library**: save target speaker reference audio as a reusable voice profile.
 - **Text Voice Cloning**: upload target reference audio and enter text.
 - **Model Download**: download configured Hugging Face or ModelScope snapshots into `models/`.
 - **Model Configuration**: inspect configured and missing CLI backends.
@@ -91,6 +93,15 @@ models/Fun-CosyVoice3-0.5B-2512/
 
 The download source can be selected in the WebUI. Hugging Face is available for every configured model. ModelScope is available only when the model entry defines `modelscope_id`.
 
+The built-in CosyVoice3 backend still expects the official CosyVoice repository to exist locally:
+
+```text
+external/CosyVoice/
+models/Fun-CosyVoice3-0.5B-2512/
+```
+
+The repository is not cloned by this app. Install it manually if you want to use the built-in CosyVoice3 backend.
+
 ## Backend Configuration
 
 Copy the example env file if you prefer file-based configuration:
@@ -118,6 +129,15 @@ uv run python main.py
 Seed-VC may require a wrapper if its CLI writes to an output directory instead of a single wav file.
 
 ### CosyVoice3
+
+The recommended app workflow is:
+
+1. Save a voice in **Voice Clone Library**.
+2. Download the CosyVoice3 model in **Model Download**.
+3. Install the official CosyVoice repo manually under `external/CosyVoice`.
+4. Open **Text Voice Cloning**, select the saved voice, and select `CosyVoice3 Built-in`.
+
+The command-template backend is still available for custom setups:
 
 ```bash
 VOICE_MORPHER_COSYVOICE3_COMMAND='python cosyvoice3_infer.py --prompt-audio {reference} --text {text} --output {output}' \
@@ -149,7 +169,6 @@ uv run python main.py
 ├── src/
 │   ├── audio.py
 │   ├── backends.py
-│   ├── cli.py
 │   ├── config.py
 │   ├── jobs.py
 │   ├── model_downloads.py

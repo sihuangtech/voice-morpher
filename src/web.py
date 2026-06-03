@@ -13,6 +13,11 @@ from model_downloads import (
     download_source_choices,
     model_status_markdown,
 )
+from voice_profiles import (
+    create_voice_profile,
+    voice_profile_choices,
+    voice_profile_status_markdown,
+)
 
 
 CSS = """
@@ -61,13 +66,25 @@ def build_app() -> gr.Blocks:
                 )
 
             with gr.Tab("文本克隆配音"):
-                gr.Markdown("适合 CosyVoice3、Qwen3 TTS/MLX、Chatterbox：上传参考音频并输入文本。")
+                gr.Markdown("选择已克隆音色，或手动上传参考音频并输入文本。")
+                voice_profile = gr.Dropdown(
+                    label="已克隆音色",
+                    choices=voice_profile_choices(),
+                    value="__upload__",
+                    interactive=True,
+                )
+                refresh_voices_for_tts = gr.Button("刷新音色列表")
                 tts_reference = gr.Audio(label="目标人物参考音频", type="filepath")
+                tts_prompt_text = gr.Textbox(
+                    label="参考音频文本",
+                    lines=3,
+                    placeholder="参考音频里说了什么。CosyVoice3 克隆建议填写；不知道可先留空。",
+                )
                 tts_text = gr.Textbox(label="要生成的文本", lines=5)
                 tts_backend = gr.Dropdown(
                     label="TTS 模型",
                     choices=backend_choices("text_to_speech"),
-                    value="cosyvoice3_cli",
+                    value="cosyvoice3_builtin",
                     interactive=True,
                 )
                 tts_button = gr.Button("开始生成", variant="primary")
@@ -76,15 +93,35 @@ def build_app() -> gr.Blocks:
 
                 tts_button.click(
                     fn=synthesize_text,
-                    inputs=[tts_reference, tts_text, tts_backend],
+                    inputs=[voice_profile, tts_reference, tts_prompt_text, tts_text, tts_backend],
                     outputs=[tts_output, tts_status],
+                )
+                refresh_voices_for_tts.click(
+                    fn=refresh_voice_profile_dropdown,
+                    inputs=[],
+                    outputs=[voice_profile],
+                )
+
+            with gr.Tab("音色克隆"):
+                gr.Markdown("把目标人物参考音频保存成可复用音色。保存后可在“文本克隆配音”里直接选择。")
+                clone_name = gr.Textbox(label="音色名称", placeholder="例如：旁白男声 / 客服女声 / Alice")
+                clone_reference = gr.Audio(label="目标人物参考音频", type="filepath")
+                clone_prompt_text = gr.Textbox(
+                    label="参考音频文本",
+                    lines=4,
+                    placeholder="参考音频里说的原文。CosyVoice3 推荐填写，音色相似度和稳定性会更好。",
+                )
+                clone_button = gr.Button("保存音色", variant="primary")
+                clone_status = gr.Markdown(voice_profile_status_markdown())
+
+                clone_button.click(
+                    fn=clone_voice_profile,
+                    inputs=[clone_name, clone_reference, clone_prompt_text],
+                    outputs=[clone_status],
                 )
 
             with gr.Tab("模型下载"):
-                gr.Markdown(
-                    "下载 Hugging Face 模型到本地 `models/` 目录。Seed-VC 的仓库和依赖需要单独安装，"
-                    "这里先管理 TTS/MLX 这类可直接 snapshot 下载的权重。"
-                )
+                gr.Markdown("下载模型权重到本地 `models/` 目录。")
                 model_choice = gr.Dropdown(
                     label="模型",
                     choices=download_choices(),
@@ -128,13 +165,39 @@ def convert_audio(source_path: str | None, reference_path: str | None, backend_n
     return result.output_path, _success_message(result.job_id, result.output_path)
 
 
-def synthesize_text(reference_path: str | None, text: str, backend_name: str):
-    if not reference_path:
-        return None, "请上传目标人物参考音频。"
-    result = run_text_to_speech(reference_path, text, backend_name)
+def synthesize_text(
+    voice_profile_key: str,
+    reference_path: str | None,
+    prompt_text: str,
+    text: str,
+    backend_name: str,
+):
+    if voice_profile_key == "__upload__" and not reference_path:
+        return None, "请选择已克隆音色，或上传目标人物参考音频。"
+    result = run_text_to_speech(
+        reference_path,
+        text,
+        prompt_text,
+        backend_name,
+        voice_profile_key,
+    )
     if result.status != "completed" or not result.output_path:
         return None, f"生成失败：{result.error}"
     return result.output_path, _success_message(result.job_id, result.output_path)
+
+
+def clone_voice_profile(name: str, reference_path: str | None, prompt_text: str) -> str:
+    try:
+        if not reference_path:
+            raise ValueError("请上传目标人物参考音频。")
+        profile = create_voice_profile(name, reference_path, prompt_text)
+    except Exception as exc:
+        return f"保存失败：{exc}\n\n{voice_profile_status_markdown()}"
+    return f"已保存音色 `{profile.name}`。\n\n{voice_profile_status_markdown()}"
+
+
+def refresh_voice_profile_dropdown():
+    return gr.update(choices=voice_profile_choices(), value="__upload__")
 
 
 def download_selected_model(model_key: str, source: str, use_hf_mirror: bool) -> str:

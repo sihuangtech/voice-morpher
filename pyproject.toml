@@ -23,7 +23,15 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-py-modules = ["audio", "backends", "config", "jobs", "model_downloads", "web"]
+py-modules = [
+    "audio",
+    "backends",
+    "config",
+    "jobs",
+    "model_downloads",
+    "voice_profiles",
+    "web",
+]
 
 [dependency-groups]
 dev = [

@@ -21,6 +21,8 @@ class Settings(BaseSettings):
     data_dir: Path = Field(default=Path("data"))
     models_dir: Path = Field(default=Path("models"))
     model_catalog_path: Path = Field(default=Path("config/models.toml"))
+    cosyvoice_repo_dir: Path = Field(default=Path("external/CosyVoice"))
+    cosyvoice3_model_dir: Path = Field(default=Path("models/Fun-CosyVoice3-0.5B-2512"))
     max_upload_mb: int = 100
     max_audio_seconds: int = 600
     sample_rate: int = 24_000
@@ -28,6 +30,10 @@ class Settings(BaseSettings):
     @property
     def job_dir(self) -> Path:
         return self.data_dir / "jobs"
+
+    @property
+    def voice_dir(self) -> Path:
+        return self.data_dir / "voices"
 
 
 settings = Settings()
