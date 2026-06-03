@@ -62,7 +62,7 @@ Gradio 界面包含：
 
 - **音频换音色**：上传源音频和目标人物参考音频。
 - **文本克隆配音**：上传目标人物参考音频并输入文本。
-- **模型下载**：把配置好的 Hugging Face 模型快照下载到 `models/`。
+- **模型下载**：把配置好的 Hugging Face 或 ModelScope 模型快照下载到 `models/`。
 - **模型配置**：查看 CLI 后端是否已配置。
 
 ## 模型清单
@@ -82,6 +82,14 @@ models/
 ```
 
 `models/` 已加入 `.gitignore`。
+
+例如 CosyVoice3 会下载到：
+
+```text
+models/Fun-CosyVoice3-0.5B-2512/
+```
+
+WebUI 中可以选择下载源。Hugging Face 对所有已配置模型可用；ModelScope 只有在模型条目里配置了 `modelscope_id` 时可用。
 
 ## 后端配置
 

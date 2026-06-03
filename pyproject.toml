@@ -11,6 +11,7 @@ dependencies = [
     "gradio>=6.15.2",
     "huggingface-hub>=1.17.0",
     "librosa>=0.11.0",
+    "modelscope>=1.37.1",
     "numpy>=2.4.6",
     "pydantic-settings>=2.14.1",
     "soundfile>=0.13.1",

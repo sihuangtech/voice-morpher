@@ -12,3 +12,4 @@ def test_model_catalog_loads_from_toml():
         "qwen3_tts_06b_mlx",
         "qwen3_tts_17b_mlx_8bit",
     }
+    assert next(model for model in models if model.key == "cosyvoice3").modelscope_id

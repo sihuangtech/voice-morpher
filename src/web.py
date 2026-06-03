@@ -7,7 +7,12 @@ import gradio as gr
 from backends import backend_choices, list_backends
 from config import settings
 from jobs import run_audio_to_audio, run_text_to_speech
-from model_downloads import download_choices, download_model, model_status_markdown
+from model_downloads import (
+    download_choices,
+    download_model,
+    download_source_choices,
+    model_status_markdown,
+)
 
 
 CSS = """
@@ -86,6 +91,12 @@ def build_app() -> gr.Blocks:
                     value="cosyvoice3",
                     interactive=True,
                 )
+                download_source = gr.Dropdown(
+                    label="下载源",
+                    choices=download_source_choices(),
+                    value="huggingface",
+                    interactive=True,
+                )
                 use_hf_mirror = gr.Checkbox(label="使用 hf-mirror.com", value=False)
                 download_button = gr.Button("下载模型", variant="primary")
                 refresh_button = gr.Button("刷新状态")
@@ -93,7 +104,7 @@ def build_app() -> gr.Blocks:
 
                 download_button.click(
                     fn=download_selected_model,
-                    inputs=[model_choice, use_hf_mirror],
+                    inputs=[model_choice, download_source, use_hf_mirror],
                     outputs=[download_status],
                 )
                 refresh_button.click(
@@ -126,9 +137,9 @@ def synthesize_text(reference_path: str | None, text: str, backend_name: str):
     return result.output_path, _success_message(result.job_id, result.output_path)
 
 
-def download_selected_model(model_key: str, use_hf_mirror: bool) -> str:
+def download_selected_model(model_key: str, source: str, use_hf_mirror: bool) -> str:
     try:
-        message = download_model(model_key, use_hf_mirror)
+        message = download_model(model_key, source, use_hf_mirror)
     except Exception as exc:
         return f"下载失败：{exc}\n\n{model_status_markdown()}"
     return f"{message}\n\n{model_status_markdown()}"

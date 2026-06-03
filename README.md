@@ -62,7 +62,7 @@ The Gradio interface includes:
 
 - **Audio Voice Conversion**: upload source audio and target reference audio.
 - **Text Voice Cloning**: upload target reference audio and enter text.
-- **Model Download**: download configured Hugging Face snapshots into `models/`.
+- **Model Download**: download configured Hugging Face or ModelScope snapshots into `models/`.
 - **Model Configuration**: inspect configured and missing CLI backends.
 
 ## Model Catalog
@@ -82,6 +82,14 @@ models/
 ```
 
 `models/` is ignored by git.
+
+For example, the CosyVoice3 entry downloads to:
+
+```text
+models/Fun-CosyVoice3-0.5B-2512/
+```
+
+The download source can be selected in the WebUI. Hugging Face is available for every configured model. ModelScope is available only when the model entry defines `modelscope_id`.
 
 ## Backend Configuration
 

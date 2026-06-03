@@ -17,6 +17,7 @@ class ModelDownload:
     label: str
     provider: str
     repo_id: str
+    modelscope_id: str
     local_name: str
     task: str
     description: str
@@ -30,18 +31,26 @@ def download_choices() -> list[tuple[str, str]]:
     return [(model.label, model.key) for model in load_model_catalog()]
 
 
+def download_source_choices() -> list[tuple[str, str]]:
+    return [
+        ("Hugging Face", "huggingface"),
+        ("ModelScope", "modelscope"),
+    ]
+
+
 def model_status_markdown() -> str:
     settings.models_dir.mkdir(parents=True, exist_ok=True)
     rows = [
-        "| Model | Task | Repository | Local path | Status |",
-        "| --- | --- | --- | --- | --- |",
+        "| Model | Task | Hugging Face | ModelScope | Local path | Status |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     for model in load_model_catalog():
         rows.append(
-            "| {label} | {task} | `{repo}` | `{path}` | {status} |".format(
+            "| {label} | {task} | `{repo}` | {ms} | `{path}` | {status} |".format(
                 label=model.label,
                 task=model.task,
                 repo=model.repo_id,
+                ms=f"`{model.modelscope_id}`" if model.modelscope_id else "Not configured",
                 path=model.local_dir,
                 status="Downloaded" if is_downloaded(model.key) else "Missing",
             )
@@ -49,10 +58,18 @@ def model_status_markdown() -> str:
     return "\n".join(rows)
 
 
-def download_model(model_key: str, use_hf_mirror: bool) -> str:
+def download_model(model_key: str, source: str, use_hf_mirror: bool) -> str:
     model = _get_model(model_key)
     model.local_dir.parent.mkdir(parents=True, exist_ok=True)
 
+    if source == "modelscope":
+        return _download_from_modelscope(model)
+    if source != "huggingface":
+        raise ValueError(f"Unknown download source: {source}")
+    return _download_from_hugging_face(model, use_hf_mirror)
+
+
+def _download_from_hugging_face(model: ModelDownload, use_hf_mirror: bool) -> str:
     old_endpoint = os.environ.get("HF_ENDPOINT")
     if use_hf_mirror:
         os.environ["HF_ENDPOINT"] = "https://hf-mirror.com"
@@ -69,7 +86,20 @@ def download_model(model_key: str, use_hf_mirror: bool) -> str:
             else:
                 os.environ["HF_ENDPOINT"] = old_endpoint
 
-    return f"Downloaded `{model.label}` to `{local_path}`."
+    return f"Downloaded `{model.label}` from Hugging Face to `{local_path}`."
+
+
+def _download_from_modelscope(model: ModelDownload) -> str:
+    if not model.modelscope_id:
+        raise ValueError(f"ModelScope repository is not configured for {model.label}")
+
+    from modelscope import snapshot_download as modelscope_snapshot_download
+
+    local_path = modelscope_snapshot_download(
+        model.modelscope_id,
+        local_dir=str(model.local_dir),
+    )
+    return f"Downloaded `{model.label}` from ModelScope to `{local_path}`."
 
 
 def is_downloaded(model_key: str) -> bool:
@@ -98,6 +128,7 @@ def _parse_model(raw_model: dict[str, Any]) -> ModelDownload:
         "label",
         "provider",
         "repo_id",
+        "modelscope_id",
         "local_name",
         "task",
         "description",
@@ -111,6 +142,7 @@ def _parse_model(raw_model: dict[str, Any]) -> ModelDownload:
         label=str(raw_model["label"]),
         provider=str(raw_model["provider"]),
         repo_id=str(raw_model["repo_id"]),
+        modelscope_id=str(raw_model["modelscope_id"]),
         local_name=str(raw_model["local_name"]),
         task=str(raw_model["task"]),
         description=str(raw_model["description"]),
