@@ -9,6 +9,7 @@ authors = [
 requires-python = ">=3.12"
 dependencies = [
     "gradio>=6.15.2",
+    "huggingface-hub>=1.17.0",
     "librosa>=0.11.0",
     "numpy>=2.4.6",
     "pydantic-settings>=2.14.1",
@@ -24,7 +25,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-py-modules = ["audio", "backends", "cli", "config", "jobs", "web"]
+py-modules = ["audio", "backends", "cli", "config", "jobs", "model_downloads", "web"]
 
 [dependency-groups]
 dev = [

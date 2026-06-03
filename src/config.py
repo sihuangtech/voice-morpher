@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     chatterbox_command: str | None = None
 
     data_dir: Path = Field(default=Path("data"))
+    models_dir: Path = Field(default=Path("models"))
+    model_catalog_path: Path = Field(default=Path("config/models.toml"))
     max_upload_mb: int = 100
     max_audio_seconds: int = 600
     sample_rate: int = 24_000

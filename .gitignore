@@ -8,3 +8,9 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Runtime data and downloaded models
+data/
+models/
+external/
+.env

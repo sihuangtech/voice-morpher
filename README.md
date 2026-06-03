@@ -2,30 +2,45 @@
 
 [中文文档](README.zh.md)
 
-Voice Morpher is a local-first voice conversion and voice cloning MVP for Apple Silicon. It is designed around two related workflows:
+Local-first voice conversion and voice cloning toolkit with a Gradio WebUI, pluggable model backends, and model download management.
 
-- Audio-to-audio voice conversion: source audio + target speaker reference audio -> converted audio that keeps the source rhythm, pauses, and expression as much as possible.
-- Text-to-speech voice cloning: target speaker reference audio + text -> generated speech in the target speaker's voice.
+Voice Morpher is built for local demos on Apple Silicon first. It does not bundle model weights or lock the app to one model. Instead, it provides a small application layer around open-source speech models such as Seed-VC, CosyVoice3, Qwen3 TTS / MLX, and Chatterbox.
 
-The app uses a Gradio WebUI and pluggable CLI model backends, so users can choose different open-source models without rewriting the application code.
+## What It Does
 
-## Backends
+- Convert source audio into a target speaker's timbre while preserving source rhythm and pauses as much as possible.
+- Generate cloned speech from text and a target speaker reference audio.
+- Download supported Hugging Face model snapshots from the WebUI.
+- Configure model backends through command templates instead of changing application code.
+- Keep runtime data, external model repos, and downloaded weights outside the source tree.
 
-- `passthrough`: Development backend. It copies the preprocessed source audio to the output so the upload, preprocessing, and playback flow can be tested without a model.
-- `seed_vc_cli`: Audio-to-audio voice conversion through an external Seed-VC command.
-- `cosyvoice3_cli`: Text-to-speech voice cloning through an external CosyVoice3 command.
-- `qwen3_tts_cli`: Apple Silicon-friendly TTS cloning through an external Qwen3 TTS / MLX command.
-- `chatterbox_cli`: Lightweight TTS cloning through an external Chatterbox command.
+## Current Status
 
-## Install
+This is an MVP. The application flow, audio preprocessing, Gradio interface, model catalog, and CLI backend adapters are implemented. Real model inference depends on installing the target model projects separately and wiring their commands through environment variables.
+
+The default `passthrough` backend is intentionally model-free. It copies the preprocessed source audio to the output so the UI and pipeline can be tested before installing any model.
+
+## Supported Workflows
+
+| Workflow | Input | Output | Recommended backend |
+| --- | --- | --- | --- |
+| Voice conversion | Source audio + target reference audio | Converted audio | `seed_vc_cli` |
+| TTS voice cloning | Target reference audio + text | Generated speech | `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
+| Pipeline test | Source audio + target reference audio | Copied source audio | `passthrough` |
+
+## Requirements
+
+- macOS, Linux, or Windows
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/)
+- Optional model-specific runtimes for Seed-VC, CosyVoice3, Qwen3 TTS / MLX, or Chatterbox
+
+Apple Silicon is the primary local target, but the app itself is model-agnostic.
+
+## Quick Start
 
 ```bash
 uv sync
-```
-
-## Run
-
-```bash
 uv run voice-morpher
 ```
 
@@ -41,63 +56,125 @@ If port `8000` is already in use:
 VOICE_MORPHER_PORT=8001 uv run voice-morpher
 ```
 
-## Configure Seed-VC
+## WebUI
 
-Install and test Seed-VC separately first. Then configure the command template:
+The Gradio interface includes:
+
+- **Audio Voice Conversion**: upload source audio and target reference audio.
+- **Text Voice Cloning**: upload target reference audio and enter text.
+- **Model Download**: download configured Hugging Face snapshots into `models/`.
+- **Model Configuration**: inspect configured and missing CLI backends.
+
+## Model Catalog
+
+Downloadable model metadata is stored in:
+
+```text
+config/models.toml
+```
+
+Add or edit entries there instead of editing Python code. Each entry defines the display label, Hugging Face repo, local directory name, task, and description.
+
+Downloaded weights are stored under:
+
+```text
+models/
+```
+
+`models/` is ignored by git.
+
+## Backend Configuration
+
+Copy the example env file if you prefer file-based configuration:
+
+```bash
+cp .env.example .env
+```
+
+Command templates support these placeholders:
+
+- `{source}`: preprocessed source audio path.
+- `{reference}`: preprocessed target speaker reference audio path.
+- `{text}`: input text for TTS voice cloning.
+- `{output}`: output wav path that the backend command must create.
+
+### Seed-VC
+
+Install and test Seed-VC separately first, then configure:
 
 ```bash
 VOICE_MORPHER_SEED_VC_COMMAND='python inference.py --source {source} --target {reference} --output {output}' \
 uv run voice-morpher
 ```
 
-`{source}`, `{reference}`, and `{output}` are replaced with preprocessed wav file paths by this app.
+Seed-VC may require a wrapper if its CLI writes to an output directory instead of a single wav file.
 
-## Configure TTS Cloning Models
-
-CosyVoice3, Qwen3 TTS / MLX, and Chatterbox are TTS backends for:
-
-```text
-reference audio + text -> cloned speech
-```
-
-Example command templates:
+### CosyVoice3
 
 ```bash
 VOICE_MORPHER_COSYVOICE3_COMMAND='python cosyvoice3_infer.py --prompt-audio {reference} --text {text} --output {output}' \
 uv run voice-morpher
 ```
 
+### Qwen3 TTS / MLX
+
 ```bash
 VOICE_MORPHER_QWEN3_TTS_COMMAND='python qwen3_tts.py --reference {reference} --text {text} --output {output}' \
 uv run voice-morpher
 ```
+
+### Chatterbox
 
 ```bash
 VOICE_MORPHER_CHATTERBOX_COMMAND='python chatterbox_tts.py --reference {reference} --text {text} --output {output}' \
 uv run voice-morpher
 ```
 
-Supported placeholders:
+## Project Layout
 
-- `{source}`: Preprocessed source audio. Used by audio-to-audio backends.
-- `{reference}`: Preprocessed target speaker reference audio.
-- `{text}`: Input text for TTS cloning.
-- `{output}`: Output wav path that the model command must create.
-
-## Configuration File
-
-Copy `.env.example` to `.env` and edit it if you prefer file-based configuration:
-
-```bash
-cp .env.example .env
+```text
+.
+├── config/
+│   └── models.toml
+├── docs/
+│   └── TECHNICAL_DESIGN.md
+├── src/
+│   ├── audio.py
+│   ├── backends.py
+│   ├── cli.py
+│   ├── config.py
+│   ├── jobs.py
+│   ├── model_downloads.py
+│   └── web.py
+├── tests/
+├── .env.example
+├── README.md
+└── README.zh.md
 ```
 
-## Test
+## Development
 
 ```bash
-uv run pytest
 uv run ruff check
+uv run pytest
 ```
+
+## Roadmap
+
+- Add wrappers for common Seed-VC output layouts.
+- Add install helpers for external model repositories.
+- Add background jobs and progress reporting for long downloads and inference.
+- Add model-specific validation for required local files.
+- Add long-audio slicing, silence handling, and vocal separation.
+- Add ASR + TTS workflow for video translation.
+
+## Safety
+
+Only use voices you own or are authorized to process. This project does not include consent verification, watermarking, or misuse detection. Add those controls before any public or commercial deployment.
+
+## License
+
+No license has been selected yet. Add a license before publishing this repository publicly.
 
 ## Technical Design
 

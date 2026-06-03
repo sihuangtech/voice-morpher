@@ -27,9 +27,9 @@ Seed-VC 当前公开描述支持 zero-shot voice conversion 和 1-30 秒参考�
 
 参考：
 
-- Seed-VC: https://github.com/Plachtaa/seed-vc
-- OpenVoice: https://github.com/myshell-ai/OpenVoice
-- CosyVoice: https://github.com/FunAudioLLM/CosyVoice
+- Seed-VC: <https://github.com/Plachtaa/seed-vc>
+- OpenVoice: <https://github.com/myshell-ai/OpenVoice>
+- CosyVoice: <https://github.com/FunAudioLLM/CosyVoice>
 
 ## Apple Silicon 判断
 

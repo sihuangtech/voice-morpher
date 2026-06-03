@@ -2,30 +2,45 @@
 
 [English README](README.md)
 
-Voice Morpher 是一个本地优先的 AI 音色转换和语音克隆 MVP，优先考虑 Apple Silicon 本地运行。它支持两类相关但不同的流程：
+本地优先的语音音色转换和语音克隆工具，带 Gradio WebUI、可插拔模型后端和模型下载管理。
 
-- 音频换音色：源音频 + 目标人物参考音频 -> 尽量保留源音频的语速、停顿、节奏和表达方式，同时转换成目标音色。
-- 文本克隆配音：目标人物参考音频 + 文本 -> 生成目标人物音色的语音。
+Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权重，也不把应用锁死在某一个模型上，而是在 Seed-VC、CosyVoice3、Qwen3 TTS / MLX、Chatterbox 等开源语音模型之上提供一层轻量应用。
 
-项目使用 Gradio WebUI 和可插拔 CLI 模型后端，用户可以选择不同开源模型，而不需要改业务代码。
+## 功能
 
-## 后端
+- 将源音频转换成目标人物音色，并尽量保留源音频的语速、停顿和节奏。
+- 根据目标人物参考音频和文本生成克隆语音。
+- 在 WebUI 中下载支持的 Hugging Face 模型快照。
+- 通过命令模板配置模型后端，不需要修改应用代码。
+- 将运行数据、外部模型仓库和下载权重放在源码目录之外。
 
-- `passthrough`：开发后端，直接输出预处理后的源音频，用于验证上传、预处理和播放流程。
-- `seed_vc_cli`：通过外部 Seed-VC 命令接入 audio-to-audio 音色转换。
-- `cosyvoice3_cli`：通过外部 CosyVoice3 命令接入文本克隆配音。
-- `qwen3_tts_cli`：通过外部 Qwen3 TTS / MLX 命令接入 Apple Silicon 友好的 TTS 克隆。
-- `chatterbox_cli`：通过外部 Chatterbox 命令接入轻量 TTS 克隆。
+## 当前状态
 
-## 安装
+这是一个 MVP。应用流程、音频预处理、Gradio 界面、模型清单和 CLI 后端适配已经实现。真实模型推理依赖你单独安装对应模型项目，并通过环境变量把推理命令接进来。
+
+默认的 `passthrough` 后端不依赖任何模型。它会把预处理后的源音频直接复制成输出，用于在安装真实模型前测试 UI 和流程。
+
+## 支持的流程
+
+| 流程 | 输入 | 输出 | 推荐后端 |
+| --- | --- | --- | --- |
+| 音频换音色 | 源音频 + 目标参考音频 | 转换后的音频 | `seed_vc_cli` |
+| 文本克隆配音 | 目标参考音频 + 文本 | 生成语音 | `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
+| 流程测试 | 源音频 + 目标参考音频 | 复制源音频 | `passthrough` |
+
+## 环境要求
+
+- macOS、Linux 或 Windows
+- Python 3.12+
+- [uv](https://docs.astral.sh/uv/)
+- 可选：Seed-VC、CosyVoice3、Qwen3 TTS / MLX、Chatterbox 各自需要的运行环境
+
+应用本身是模型无关的，但本地运行优先考虑 Apple Silicon。
+
+## 快速开始
 
 ```bash
 uv sync
-```
-
-## 启动
-
-```bash
 uv run voice-morpher
 ```
 
@@ -41,63 +56,125 @@ http://127.0.0.1:8000
 VOICE_MORPHER_PORT=8001 uv run voice-morpher
 ```
 
-## 接入 Seed-VC
+## WebUI
 
-先在本机单独安装并验证 Seed-VC。然后配置命令模板：
+Gradio 界面包含：
+
+- **音频换音色**：上传源音频和目标人物参考音频。
+- **文本克隆配音**：上传目标人物参考音频并输入文本。
+- **模型下载**：把配置好的 Hugging Face 模型快照下载到 `models/`。
+- **模型配置**：查看 CLI 后端是否已配置。
+
+## 模型清单
+
+可下载模型的元数据放在：
+
+```text
+config/models.toml
+```
+
+新增或修改模型时，改这个文本配置文件即可，不需要改 Python 代码。每个条目包含界面名称、Hugging Face 仓库、本地目录名、任务类型和描述。
+
+下载后的模型权重放在：
+
+```text
+models/
+```
+
+`models/` 已加入 `.gitignore`。
+
+## 后端配置
+
+如果你更喜欢用配置文件，可以复制：
+
+```bash
+cp .env.example .env
+```
+
+命令模板支持这些占位符：
+
+- `{source}`：预处理后的源音频路径。
+- `{reference}`：预处理后的目标人物参考音频路径。
+- `{text}`：文本克隆配音输入文本。
+- `{output}`：后端命令必须生成的 wav 输出路径。
+
+### Seed-VC
+
+先单独安装并测试 Seed-VC，然后配置：
 
 ```bash
 VOICE_MORPHER_SEED_VC_COMMAND='python inference.py --source {source} --target {reference} --output {output}' \
 uv run voice-morpher
 ```
 
-`{source}`、`{reference}`、`{output}` 会由本项目自动替换成预处理后的 wav 路径。
+如果 Seed-VC 的 CLI 输出目录而不是单个 wav 文件，后续需要加一个 wrapper 适配。
 
-## 接入 TTS 克隆模型
-
-CosyVoice3、Qwen3 TTS / MLX、Chatterbox 属于 TTS 后端：
-
-```text
-参考音频 + 文本 -> 目标音色语音
-```
-
-命令模板示例：
+### CosyVoice3
 
 ```bash
 VOICE_MORPHER_COSYVOICE3_COMMAND='python cosyvoice3_infer.py --prompt-audio {reference} --text {text} --output {output}' \
 uv run voice-morpher
 ```
 
+### Qwen3 TTS / MLX
+
 ```bash
 VOICE_MORPHER_QWEN3_TTS_COMMAND='python qwen3_tts.py --reference {reference} --text {text} --output {output}' \
 uv run voice-morpher
 ```
+
+### Chatterbox
 
 ```bash
 VOICE_MORPHER_CHATTERBOX_COMMAND='python chatterbox_tts.py --reference {reference} --text {text} --output {output}' \
 uv run voice-morpher
 ```
 
-命令模板支持这些占位符：
+## 项目结构
 
-- `{source}`：预处理后的源音频，仅 audio-to-audio 后端使用。
-- `{reference}`：预处理后的目标人物参考音频。
-- `{text}`：文本克隆配音输入文本。
-- `{output}`：模型必须写出的 wav 文件路径。
-
-## 配置文件
-
-如果你更喜欢文件配置，可以复制 `.env.example`：
-
-```bash
-cp .env.example .env
+```text
+.
+├── config/
+│   └── models.toml
+├── docs/
+│   └── TECHNICAL_DESIGN.md
+├── src/
+│   ├── audio.py
+│   ├── backends.py
+│   ├── cli.py
+│   ├── config.py
+│   ├── jobs.py
+│   ├── model_downloads.py
+│   └── web.py
+├── tests/
+├── .env.example
+├── README.md
+└── README.zh.md
 ```
 
-## 测试
+## 开发
 
 ```bash
-uv run pytest
 uv run ruff check
+uv run pytest
 ```
+
+## 路线图
+
+- 为常见 Seed-VC 输出目录结构增加 wrapper。
+- 增加外部模型仓库安装助手。
+- 为长时间下载和推理增加后台任务与进度显示。
+- 增加模型本地文件校验。
+- 增加长音频切片、静音处理和人声分离。
+- 增加 ASR + TTS 视频翻译流程。
+
+## 安全说明
+
+请只处理你拥有或已获得授权的声音。本项目目前不包含授权校验、水印或滥用检测。公开发布或商业化前，需要补齐这些控制。
+
+## 许可证
+
+当前还未选择许可证。公开发布仓库前请先添加 license。
 
 ## 技术设计
 

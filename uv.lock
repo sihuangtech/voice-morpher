@@ -1677,6 +1677,7 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "gradio" },
+    { name = "huggingface-hub" },
     { name = "librosa" },
     { name = "numpy" },
     { name = "pydantic-settings" },
@@ -1692,6 +1693,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "gradio", specifier = ">=6.15.2" },
+    { name = "huggingface-hub", specifier = ">=1.17.0" },
     { name = "librosa", specifier = ">=0.11.0" },
     { name = "numpy", specifier = ">=2.4.6" },
     { name = "pydantic-settings", specifier = ">=2.14.1" },

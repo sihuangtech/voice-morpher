@@ -1,0 +1,26 @@
+[[models]]
+key = "cosyvoice3"
+label = "CosyVoice3 0.5B"
+provider = "Hugging Face"
+repo_id = "FunAudioLLM/Fun-CosyVoice3-0.5B-2512"
+local_name = "Fun-CosyVoice3-0.5B-2512"
+task = "Text-to-speech voice cloning"
+description = "Strong multilingual zero-shot TTS cloning candidate."
+
+[[models]]
+key = "qwen3_tts_06b_mlx"
+label = "Qwen3 TTS 0.6B MLX"
+provider = "Hugging Face"
+repo_id = "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-bf16"
+local_name = "Qwen3-TTS-12Hz-0.6B-Base-bf16"
+task = "Apple Silicon TTS cloning"
+description = "Smaller Apple Silicon-friendly TTS candidate."
+
+[[models]]
+key = "qwen3_tts_17b_mlx_8bit"
+label = "Qwen3 TTS 1.7B MLX 8-bit"
+provider = "Hugging Face"
+repo_id = "mlx-community/Qwen3-TTS-12Hz-1.7B-Base-8bit"
+local_name = "Qwen3-TTS-12Hz-1.7B-Base-8bit"
+task = "Apple Silicon TTS cloning"
+description = "Larger MLX TTS candidate with 8-bit weights."
