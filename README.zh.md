@@ -41,7 +41,7 @@ Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权�
 
 ```bash
 uv sync
-uv run voice-morpher
+uv run python main.py
 ```
 
 打开：
@@ -53,7 +53,7 @@ http://127.0.0.1:8000
 如果 `8000` 端口已被占用：
 
 ```bash
-VOICE_MORPHER_PORT=8001 uv run voice-morpher
+VOICE_MORPHER_PORT=8001 uv run python main.py
 ```
 
 ## WebUI
@@ -104,7 +104,7 @@ cp .env.example .env
 
 ```bash
 VOICE_MORPHER_SEED_VC_COMMAND='python inference.py --source {source} --target {reference} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 如果 Seed-VC 的 CLI 输出目录而不是单个 wav 文件，后续需要加一个 wrapper 适配。
@@ -113,21 +113,21 @@ uv run voice-morpher
 
 ```bash
 VOICE_MORPHER_COSYVOICE3_COMMAND='python cosyvoice3_infer.py --prompt-audio {reference} --text {text} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 ### Qwen3 TTS / MLX
 
 ```bash
 VOICE_MORPHER_QWEN3_TTS_COMMAND='python qwen3_tts.py --reference {reference} --text {text} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 ### Chatterbox
 
 ```bash
 VOICE_MORPHER_CHATTERBOX_COMMAND='python chatterbox_tts.py --reference {reference} --text {text} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 ## 项目结构

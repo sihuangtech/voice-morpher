@@ -41,7 +41,7 @@ Apple Silicon is the primary local target, but the app itself is model-agnostic.
 
 ```bash
 uv sync
-uv run voice-morpher
+uv run python main.py
 ```
 
 Open:
@@ -53,7 +53,7 @@ http://127.0.0.1:8000
 If port `8000` is already in use:
 
 ```bash
-VOICE_MORPHER_PORT=8001 uv run voice-morpher
+VOICE_MORPHER_PORT=8001 uv run python main.py
 ```
 
 ## WebUI
@@ -104,7 +104,7 @@ Install and test Seed-VC separately first, then configure:
 
 ```bash
 VOICE_MORPHER_SEED_VC_COMMAND='python inference.py --source {source} --target {reference} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 Seed-VC may require a wrapper if its CLI writes to an output directory instead of a single wav file.
@@ -113,21 +113,21 @@ Seed-VC may require a wrapper if its CLI writes to an output directory instead o
 
 ```bash
 VOICE_MORPHER_COSYVOICE3_COMMAND='python cosyvoice3_infer.py --prompt-audio {reference} --text {text} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 ### Qwen3 TTS / MLX
 
 ```bash
 VOICE_MORPHER_QWEN3_TTS_COMMAND='python qwen3_tts.py --reference {reference} --text {text} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 ### Chatterbox
 
 ```bash
 VOICE_MORPHER_CHATTERBOX_COMMAND='python chatterbox_tts.py --reference {reference} --text {text} --output {output}' \
-uv run voice-morpher
+uv run python main.py
 ```
 
 ## Project Layout

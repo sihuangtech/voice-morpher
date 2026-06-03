@@ -16,16 +16,13 @@ dependencies = [
     "soundfile>=0.13.1",
 ]
 
-[project.scripts]
-voice-morpher = "cli:main"
-
 [build-system]
 requires = ["setuptools>=80"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
-py-modules = ["audio", "backends", "cli", "config", "jobs", "model_downloads", "web"]
+py-modules = ["audio", "backends", "config", "jobs", "model_downloads", "web"]
 
 [dependency-groups]
 dev = [
