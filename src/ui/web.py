@@ -11,7 +11,9 @@ from ui.handlers import (
     convert_audio,
     download_selected_model,
     model_config_markdown,
+    refresh_model_dropdown,
     refresh_voice_profile_dropdown,
+    show_selected_model,
     synthesize_text,
 )
 
@@ -120,6 +122,7 @@ def _model_download_tab() -> None:
             value="cosyvoice3",
             interactive=True,
         )
+        model_detail = gr.Markdown(show_selected_model("cosyvoice3"))
         download_source = gr.Dropdown(
             label="下载源",
             choices=download_source_choices(),
@@ -128,12 +131,19 @@ def _model_download_tab() -> None:
         )
         use_hf_mirror = gr.Checkbox(label="使用 hf-mirror.com", value=False)
         download_button = gr.Button("下载模型", variant="primary")
+        refresh_models_button = gr.Button("刷新模型列表")
         refresh_button = gr.Button("刷新状态")
         download_status = gr.Markdown(model_status_markdown())
+        model_choice.change(fn=show_selected_model, inputs=[model_choice], outputs=[model_detail])
         download_button.click(
             fn=download_selected_model,
             inputs=[model_choice, download_source, use_hf_mirror],
             outputs=[download_status],
+        )
+        refresh_models_button.click(
+            fn=refresh_model_dropdown,
+            inputs=[],
+            outputs=[model_choice, model_detail],
         )
         refresh_button.click(fn=model_status_markdown, inputs=[], outputs=[download_status])
 
