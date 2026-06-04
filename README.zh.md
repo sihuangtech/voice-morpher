@@ -38,7 +38,7 @@ Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权�
 | Chatterbox | 下载清单 + CLI 后端 | 开源 TTS 声音克隆，支持更丰富表达控制。 |
 | F5-TTS | 下载清单 + CLI 后端 | 成熟 zero-shot TTS；商用前需要确认模型许可。 |
 | OpenVoice V2 | 下载清单 + CLI 后端 | 轻量、MIT 许可的声音克隆候选。 |
-| IndexTTS-2 | 下载清单 + CLI 后端 | 中文/英文表达能力较强的 TTS 候选。 |
+| IndexTTS-2 | 下载清单 + CLI 后端 | 当前公开权重。IndexTTS-2.5 已有技术报告，但这里暂未配置官方可下载权重。 |
 | XTTS v2 | 下载清单 + CLI 后端 | 经典多语言声音克隆模型；生产使用前需要确认许可。 |
 | Seed-VC | CLI 后端 | audio-to-audio 音色转换，不是 TTS。 |
 

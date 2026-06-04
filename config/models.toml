@@ -60,13 +60,13 @@ description = "Lightweight MIT-licensed instant voice cloning model."
 
 [[models]]
 key = "indextts2"
-label = "IndexTTS-2"
+label = "IndexTTS-2 (released weights)"
 provider = "Hugging Face"
 repo_id = "IndexTeam/IndexTTS-2"
 modelscope_id = ""
 local_name = "IndexTTS-2"
 task = "Text-to-speech voice cloning"
-description = "Chinese and English zero-shot TTS model with expressive control."
+description = "Current public IndexTTS weights. IndexTTS-2.5 has a technical report, but no official downloadable weights are configured here yet."
 
 [[models]]
 key = "xtts_v2"

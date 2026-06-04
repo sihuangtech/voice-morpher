@@ -38,7 +38,7 @@ The default `passthrough` backend is intentionally model-free. It copies the pre
 | Chatterbox | Download catalog + CLI backend | Open-source TTS voice cloning with expressive controls. |
 | F5-TTS | Download catalog + CLI backend | Mature zero-shot TTS; check model license for commercial use. |
 | OpenVoice V2 | Download catalog + CLI backend | Lightweight MIT-licensed voice cloning candidate. |
-| IndexTTS-2 | Download catalog + CLI backend | Strong Chinese/English expressive TTS candidate. |
+| IndexTTS-2 | Download catalog + CLI backend | Current public weights. IndexTTS-2.5 has a technical report, but no official downloadable weights are configured yet. |
 | XTTS v2 | Download catalog + CLI backend | Classic multilingual voice cloning model; check license before production use. |
 | Seed-VC | CLI backend | Audio-to-audio voice conversion, not TTS. |
 

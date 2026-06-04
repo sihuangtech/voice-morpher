@@ -14,7 +14,7 @@
 | Chatterbox | TTS 克隆 | 高 | 中 | MIT | 产品功能候选 |
 | OpenVoice V2 | TTS 克隆 | 中高 | 中 | MIT | 轻量商用友好兜底 |
 | F5-TTS | TTS 克隆 | 中高 | 中 | 预训练权重 CC-BY-NC | 非商业 Demo / 对比 |
-| IndexTTS-2 | TTS 克隆 | 中高 | 中低 | 需重点确认 | 中文表达候选 |
+| IndexTTS-2 / 2.5 | TTS 克隆 | 中高 | 中低 | 需重点确认 | 当前配置公开权重为 IndexTTS-2；2.5 暂按技术报告跟踪 |
 | XTTS v2 | TTS 克隆 | 中 | 中 | Coqui Public Model License | 经典对照，不建议默认商用 |
 | Fish Speech / Fish Audio S2 | TTS 克隆 | 高 | 中低 | 需确认具体权重 | 后续高质量候选 |
 | Seed-VC | 音色转换 | 高 | 中 | 需确认权重许可 | audio-to-audio 主线 |
@@ -33,7 +33,7 @@
 4. **OpenVoice V2**  
    轻量、MIT、跨语言，适合作为商用友好兜底模型。
 
-5. **F5-TTS / IndexTTS-2 / XTTS v2 / Fish Speech**  
+5. **F5-TTS / IndexTTS-2 / 2.5 / XTTS v2 / Fish Speech**  
    可进入下载清单和 CLI 后端，但默认使用前需要明确许可、硬件和安装路径。
 
 ## 项目说明
@@ -164,7 +164,7 @@
 - <https://github.com/SWivid/F5-TTS>
 - <https://arxiv.org/abs/2410.06885>
 
-### IndexTTS / IndexTTS-2
+### IndexTTS / IndexTTS-2 / IndexTTS-2.5
 
 **定位**：中文和情绪表达能力较强的 zero-shot TTS。
 
@@ -172,15 +172,18 @@
 
 - IndexTTS 论文强调自然度、zero-shot voice cloning 和推理效率。
 - IndexTTS-2 进一步强调情绪控制和时长控制，适合配音、视频同步、游戏音频。
+- IndexTTS-2.5 已有技术报告，重点是从 unmasked 到 masked speech tokenizer、语义表示和 long-context zero-shot speech synthesis。
 
 **风险**：
 
 - 许可和商用边界需要重点确认。
 - Mac 本地低门槛程度不如 MLX 路线明确。
+- 截至本文档当前更新，官方 GitHub / Hugging Face 可直接配置的公开权重仍按 `IndexTeam/IndexTTS-2` 处理；未在本项目中配置不可验证的 2.5 权重。
 
 **接入建议**：
 
-- 保留 `indextts_cli` 和模型清单项。
+- 保留 `indextts_cli` 和 `IndexTeam/IndexTTS-2` 模型清单项。
+- 等官方发布 IndexTTS-2.5 可下载权重后，再把 `config/models.toml` 的 repo 更新到 2.5。
 - 不作为默认后端，等许可证和运行路径确认后再升优先级。
 
 来源：
@@ -188,6 +191,7 @@
 - <https://github.com/index-tts/index-tts>
 - <https://arxiv.org/abs/2502.05512>
 - <https://arxiv.org/abs/2506.21619>
+- <https://arxiv.org/abs/2510.04121>
 
 ### XTTS v2
 
