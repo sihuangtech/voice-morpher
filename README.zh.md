@@ -216,6 +216,7 @@ uv run python main.py
 │   └── ui/
 ├── tests/
 ├── .env.example
+├── LICENSE
 ├── README.md
 └── README.zh.md
 ```
@@ -242,7 +243,15 @@ uv run pytest
 
 ## 许可证
 
-当前还未选择许可证。公开发布仓库前请先添加 license。
+本项目使用 [MIT License](LICENSE) 开源。
+
+第三方模型权重和模型仓库有各自的许可证。商用前请单独确认对应模型许可。
+
+## 联系方式
+
+维护者：彩旗工作室
+
+邮箱：<developer@skstudio.cn>
 
 ## 技术设计
 

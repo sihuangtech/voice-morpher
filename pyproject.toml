@@ -3,8 +3,9 @@ name = "voice-morpher"
 version = "0.1.0"
 description = "Local-first voice conversion MVP for Apple Silicon"
 readme = "README.md"
+license = "MIT"
 authors = [
-    { name = "斯黄", email = "cyx20110508@163.com" }
+    { name = "彩旗工作室（SK Studio）", email = "developer@skstudio.cn" }
 ]
 requires-python = ">=3.12"
 dependencies = [

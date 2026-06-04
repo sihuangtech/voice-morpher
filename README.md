@@ -216,6 +216,7 @@ uv run python main.py
 │   └── ui/
 ├── tests/
 ├── .env.example
+├── LICENSE
 ├── README.md
 └── README.zh.md
 ```
@@ -242,7 +243,15 @@ Only use voices you own or are authorized to process. This project does not incl
 
 ## License
 
-No license has been selected yet. Add a license before publishing this repository publicly.
+This project is released under the [MIT License](LICENSE).
+
+Third-party model weights and model repositories have their own licenses. Check each model license before commercial use.
+
+## Contact
+
+Maintainer: SK Studio
+
+Email: <developer@skstudio.cn>
 
 ## Technical Design
 
