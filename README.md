@@ -41,7 +41,7 @@ The default `passthrough` backend is intentionally model-free. It copies the pre
 | IndexTTS-2 | Download catalog + CLI backend | Strong Chinese/English expressive TTS candidate. |
 | XTTS v2 | Download catalog + CLI backend | Classic multilingual voice cloning model; check license before production use. |
 | Seed-VC | CLI backend | Audio-to-audio voice conversion, not TTS. |
- 
+
 CLI backend means the WebUI can call the model through a configured command template. It does not mean the third-party model runtime is bundled in this repository.
 
 ## Requirements
@@ -247,3 +247,5 @@ No license has been selected yet. Add a license before publishing this repositor
 ## Technical Design
 
 See [docs/TECHNICAL_DESIGN.md](docs/TECHNICAL_DESIGN.md).
+
+For model selection details, see [docs/OPEN_SOURCE_VOICE_CLONING.md](docs/OPEN_SOURCE_VOICE_CLONING.md).

@@ -247,3 +247,5 @@ uv run pytest
 ## 技术设计
 
 见 [docs/TECHNICAL_DESIGN.md](docs/TECHNICAL_DESIGN.md)。
+
+开源语音克隆模型调研见 [docs/OPEN_SOURCE_VOICE_CLONING.md](docs/OPEN_SOURCE_VOICE_CLONING.md)。
