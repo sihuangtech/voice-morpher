@@ -4,7 +4,7 @@
 
 本地优先的语音音色转换和语音克隆工具，带 Gradio WebUI、可插拔模型后端和模型下载管理。
 
-Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权重，也不把应用锁死在某一个模型上，而是在 Seed-VC、CosyVoice3、Qwen3 TTS / MLX、Chatterbox 等开源语音模型之上提供一层轻量应用。
+Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权重，也不把应用锁死在某一个模型上，而是在 Seed-VC、CosyVoice3、Qwen3 TTS / MLX、Chatterbox、F5-TTS、OpenVoice、IndexTTS、XTTS 等开源语音模型之上提供一层轻量应用。
 
 ## 功能
 
@@ -26,8 +26,23 @@ Voice Morpher 优先面向 Apple Silicon 本地 Demo。项目不内置模型权�
 | 流程 | 输入 | 输出 | 推荐后端 |
 | --- | --- | --- | --- |
 | 音频换音色 | 源音频 + 目标参考音频 | 转换后的音频 | `seed_vc_cli` |
-| 文本克隆配音 | 目标参考音频 + 文本 | 生成语音 | `cosyvoice3_builtin`, `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
+| 文本克隆配音 | 目标参考音频 + 文本 | 生成语音 | `cosyvoice3_builtin`, `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli`, `f5_tts_cli`, `openvoice_cli`, `indextts_cli`, `xtts_cli` |
 | 流程测试 | 源音频 + 目标参考音频 | 复制源音频 | `passthrough` |
+
+## 支持的模型系列
+
+| 模型系列 | 集成状态 | 说明 |
+| --- | --- | --- |
+| Qwen3 TTS / MLX | 下载清单 + CLI 后端 | Apple Silicon 优先候选。 |
+| CosyVoice3 | 下载清单 + 内置后端 + CLI 后端 | 内置后端需要本地已有官方 CosyVoice Python 包。 |
+| Chatterbox | 下载清单 + CLI 后端 | 开源 TTS 声音克隆，支持更丰富表达控制。 |
+| F5-TTS | 下载清单 + CLI 后端 | 成熟 zero-shot TTS；商用前需要确认模型许可。 |
+| OpenVoice V2 | 下载清单 + CLI 后端 | 轻量、MIT 许可的声音克隆候选。 |
+| IndexTTS-2 | 下载清单 + CLI 后端 | 中文/英文表达能力较强的 TTS 候选。 |
+| XTTS v2 | 下载清单 + CLI 后端 | 经典多语言声音克隆模型；生产使用前需要确认许可。 |
+| Seed-VC | CLI 后端 | audio-to-audio 音色转换，不是 TTS。 |
+
+CLI 后端表示 WebUI 可以通过配置命令模板调用该模型，不表示本仓库内置第三方模型运行环境。
 
 ## 环境要求
 
@@ -155,6 +170,34 @@ uv run python main.py
 
 ```bash
 VOICE_MORPHER_CHATTERBOX_COMMAND='python chatterbox_tts.py --reference {reference} --text {text} --output {output}' \
+uv run python main.py
+```
+
+### F5-TTS
+
+```bash
+VOICE_MORPHER_F5_TTS_COMMAND='f5-tts_infer-cli --ref_audio {reference} --ref_text {prompt_text} --gen_text {text} --output_file {output}' \
+uv run python main.py
+```
+
+### OpenVoice V2
+
+```bash
+VOICE_MORPHER_OPENVOICE_COMMAND='python openvoice_infer.py --reference {reference} --text {text} --output {output}' \
+uv run python main.py
+```
+
+### IndexTTS
+
+```bash
+VOICE_MORPHER_INDEXTTS_COMMAND='python indextts_infer.py --reference {reference} --text {text} --output {output}' \
+uv run python main.py
+```
+
+### XTTS v2
+
+```bash
+VOICE_MORPHER_XTTS_COMMAND='python xtts_infer.py --speaker_wav {reference} --text {text} --output {output}' \
 uv run python main.py
 ```
 

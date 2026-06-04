@@ -9,6 +9,16 @@ task = "Text-to-speech voice cloning"
 description = "Strong multilingual zero-shot TTS cloning candidate."
 
 [[models]]
+key = "chatterbox"
+label = "Chatterbox"
+provider = "Hugging Face"
+repo_id = "ResembleAI/chatterbox"
+modelscope_id = ""
+local_name = "ResembleAI-chatterbox"
+task = "Text-to-speech voice cloning"
+description = "MIT-licensed open-source TTS voice cloning model with expressive controls."
+
+[[models]]
 key = "qwen3_tts_06b_mlx"
 label = "Qwen3 TTS 0.6B MLX"
 provider = "Hugging Face"
@@ -27,3 +37,43 @@ modelscope_id = ""
 local_name = "Qwen3-TTS-12Hz-1.7B-Base-8bit"
 task = "Apple Silicon TTS cloning"
 description = "Larger MLX TTS candidate with 8-bit weights."
+
+[[models]]
+key = "f5_tts"
+label = "F5-TTS"
+provider = "Hugging Face"
+repo_id = "SWivid/F5-TTS"
+modelscope_id = ""
+local_name = "SWivid-F5-TTS"
+task = "Text-to-speech voice cloning"
+description = "Mature zero-shot TTS model with strong community adoption."
+
+[[models]]
+key = "openvoice_v2"
+label = "OpenVoice V2"
+provider = "Hugging Face"
+repo_id = "myshell-ai/OpenVoiceV2"
+modelscope_id = ""
+local_name = "OpenVoiceV2"
+task = "Text-to-speech voice cloning"
+description = "Lightweight MIT-licensed instant voice cloning model."
+
+[[models]]
+key = "indextts2"
+label = "IndexTTS-2"
+provider = "Hugging Face"
+repo_id = "IndexTeam/IndexTTS-2"
+modelscope_id = ""
+local_name = "IndexTTS-2"
+task = "Text-to-speech voice cloning"
+description = "Chinese and English zero-shot TTS model with expressive control."
+
+[[models]]
+key = "xtts_v2"
+label = "XTTS v2"
+provider = "Hugging Face"
+repo_id = "coqui/XTTS-v2"
+modelscope_id = ""
+local_name = "XTTS-v2"
+task = "Text-to-speech voice cloning"
+description = "Classic multilingual voice cloning TTS model; check license before production use."

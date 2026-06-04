@@ -151,6 +151,34 @@ class ChatterboxCliBackend(CommandTemplateBackend):
     description = "轻量 zero-shot TTS 克隆候选，适合文本配音分支。"
 
 
+class F5TtsCliBackend(CommandTemplateBackend):
+    name = "f5_tts_cli"
+    label = "F5-TTS CLI"
+    mode = "text_to_speech"
+    description = "成熟 zero-shot TTS 克隆候选，适合研究和非商业 Demo。"
+
+
+class OpenVoiceCliBackend(CommandTemplateBackend):
+    name = "openvoice_cli"
+    label = "OpenVoice V2 CLI"
+    mode = "text_to_speech"
+    description = "轻量、MIT、跨语言的开源声音克隆候选。"
+
+
+class IndexTtsCliBackend(CommandTemplateBackend):
+    name = "indextts_cli"
+    label = "IndexTTS CLI"
+    mode = "text_to_speech"
+    description = "中文和情绪表达能力强的 zero-shot TTS 克隆候选。"
+
+
+class XttsCliBackend(CommandTemplateBackend):
+    name = "xtts_cli"
+    label = "XTTS v2 CLI"
+    mode = "text_to_speech"
+    description = "经典多语言 voice cloning TTS 候选，许可需按使用场景确认。"
+
+
 def get_backend(name: str | None = None) -> VoiceConversionBackend:
     backend_name = name or settings.backend
     if backend_name == "passthrough":
@@ -165,6 +193,14 @@ def get_backend(name: str | None = None) -> VoiceConversionBackend:
         return Qwen3TtsCliBackend(settings.qwen3_tts_command)
     if backend_name == "chatterbox_cli":
         return ChatterboxCliBackend(settings.chatterbox_command)
+    if backend_name == "f5_tts_cli":
+        return F5TtsCliBackend(settings.f5_tts_command)
+    if backend_name == "openvoice_cli":
+        return OpenVoiceCliBackend(settings.openvoice_command)
+    if backend_name == "indextts_cli":
+        return IndexTtsCliBackend(settings.indextts_command)
+    if backend_name == "xtts_cli":
+        return XttsCliBackend(settings.xtts_command)
     raise RuntimeError(f"Unknown backend: {backend_name}")
 
 
@@ -211,6 +247,34 @@ def list_backends() -> list[BackendSpec]:
             mode=ChatterboxCliBackend.mode,
             description=ChatterboxCliBackend.description,
             configured=bool(settings.chatterbox_command),
+        ),
+        BackendSpec(
+            name="f5_tts_cli",
+            label=F5TtsCliBackend.label,
+            mode=F5TtsCliBackend.mode,
+            description=F5TtsCliBackend.description,
+            configured=bool(settings.f5_tts_command),
+        ),
+        BackendSpec(
+            name="openvoice_cli",
+            label=OpenVoiceCliBackend.label,
+            mode=OpenVoiceCliBackend.mode,
+            description=OpenVoiceCliBackend.description,
+            configured=bool(settings.openvoice_command),
+        ),
+        BackendSpec(
+            name="indextts_cli",
+            label=IndexTtsCliBackend.label,
+            mode=IndexTtsCliBackend.mode,
+            description=IndexTtsCliBackend.description,
+            configured=bool(settings.indextts_command),
+        ),
+        BackendSpec(
+            name="xtts_cli",
+            label=XttsCliBackend.label,
+            mode=XttsCliBackend.mode,
+            description=XttsCliBackend.description,
+            configured=bool(settings.xtts_command),
         ),
     ]
 

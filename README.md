@@ -4,7 +4,7 @@
 
 Local-first voice conversion and voice cloning toolkit with a Gradio WebUI, pluggable model backends, and model download management.
 
-Voice Morpher is built for local demos on Apple Silicon first. It does not bundle model weights or lock the app to one model. Instead, it provides a small application layer around open-source speech models such as Seed-VC, CosyVoice3, Qwen3 TTS / MLX, and Chatterbox.
+Voice Morpher is built for local demos on Apple Silicon first. It does not bundle model weights or lock the app to one model. Instead, it provides a small application layer around open-source speech models such as Seed-VC, CosyVoice3, Qwen3 TTS / MLX, Chatterbox, F5-TTS, OpenVoice, IndexTTS, and XTTS.
 
 ## What It Does
 
@@ -26,8 +26,23 @@ The default `passthrough` backend is intentionally model-free. It copies the pre
 | Workflow | Input | Output | Recommended backend |
 | --- | --- | --- | --- |
 | Voice conversion | Source audio + target reference audio | Converted audio | `seed_vc_cli` |
-| TTS voice cloning | Target reference audio + text | Generated speech | `cosyvoice3_builtin`, `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli` |
+| TTS voice cloning | Target reference audio + text | Generated speech | `cosyvoice3_builtin`, `cosyvoice3_cli`, `qwen3_tts_cli`, `chatterbox_cli`, `f5_tts_cli`, `openvoice_cli`, `indextts_cli`, `xtts_cli` |
 | Pipeline test | Source audio + target reference audio | Copied source audio | `passthrough` |
+
+## Supported Model Families
+
+| Model family | Integration status | Notes |
+| --- | --- | --- |
+| Qwen3 TTS / MLX | Download catalog + CLI backend | Strong Apple Silicon candidate. |
+| CosyVoice3 | Download catalog + built-in backend + CLI backend | Built-in backend expects the official CosyVoice Python package locally. |
+| Chatterbox | Download catalog + CLI backend | Open-source TTS voice cloning with expressive controls. |
+| F5-TTS | Download catalog + CLI backend | Mature zero-shot TTS; check model license for commercial use. |
+| OpenVoice V2 | Download catalog + CLI backend | Lightweight MIT-licensed voice cloning candidate. |
+| IndexTTS-2 | Download catalog + CLI backend | Strong Chinese/English expressive TTS candidate. |
+| XTTS v2 | Download catalog + CLI backend | Classic multilingual voice cloning model; check license before production use. |
+| Seed-VC | CLI backend | Audio-to-audio voice conversion, not TTS. |
+ 
+CLI backend means the WebUI can call the model through a configured command template. It does not mean the third-party model runtime is bundled in this repository.
 
 ## Requirements
 
@@ -155,6 +170,34 @@ uv run python main.py
 
 ```bash
 VOICE_MORPHER_CHATTERBOX_COMMAND='python chatterbox_tts.py --reference {reference} --text {text} --output {output}' \
+uv run python main.py
+```
+
+### F5-TTS
+
+```bash
+VOICE_MORPHER_F5_TTS_COMMAND='f5-tts_infer-cli --ref_audio {reference} --ref_text {prompt_text} --gen_text {text} --output_file {output}' \
+uv run python main.py
+```
+
+### OpenVoice V2
+
+```bash
+VOICE_MORPHER_OPENVOICE_COMMAND='python openvoice_infer.py --reference {reference} --text {text} --output {output}' \
+uv run python main.py
+```
+
+### IndexTTS
+
+```bash
+VOICE_MORPHER_INDEXTTS_COMMAND='python indextts_infer.py --reference {reference} --text {text} --output {output}' \
+uv run python main.py
+```
+
+### XTTS v2
+
+```bash
+VOICE_MORPHER_XTTS_COMMAND='python xtts_infer.py --speaker_wav {reference} --text {text} --output {output}' \
 uv run python main.py
 ```
 

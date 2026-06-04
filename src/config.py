@@ -17,6 +17,10 @@ class Settings(BaseSettings):
     cosyvoice3_command: str | None = None
     qwen3_tts_command: str | None = None
     chatterbox_command: str | None = None
+    f5_tts_command: str | None = None
+    openvoice_command: str | None = None
+    indextts_command: str | None = None
+    xtts_command: str | None = None
 
     data_dir: Path = Field(default=Path("data"))
     models_dir: Path = Field(default=Path("models"))
