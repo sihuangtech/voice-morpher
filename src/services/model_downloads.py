@@ -58,26 +58,6 @@ def model_status_markdown() -> str:
     return "\n".join(rows)
 
 
-def selected_model_markdown(model_key: str) -> str:
-    """展示某个模型的下载地址和本地保存位置。"""
-
-    model = _get_model(model_key)
-    modelscope = f"`{model.modelscope_id}`" if model.modelscope_id else "未配置"
-    status = "已下载" if is_downloaded(model.key) else "未下载"
-    return "\n".join(
-        [
-            f"### {model.label}",
-            "",
-            f"- Key: `{model.key}`",
-            f"- Hugging Face: `{model.repo_id}`",
-            f"- ModelScope: {modelscope}",
-            f"- 本地目录: `{model.local_dir}`",
-            f"- 状态: {status}",
-            f"- 说明: {model.description}",
-        ]
-    )
-
-
 def download_model(model_key: str, source: str, use_hf_mirror: bool) -> str:
     model = _get_model(model_key)
     model.local_dir.parent.mkdir(parents=True, exist_ok=True)

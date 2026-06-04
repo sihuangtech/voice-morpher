@@ -6,12 +6,7 @@ import gradio as gr
 
 from backends import list_backends
 from services.jobs import run_audio_to_audio, run_text_to_speech
-from services.model_downloads import (
-    download_choices,
-    download_model,
-    model_status_markdown,
-    selected_model_markdown,
-)
+from services.model_downloads import download_model, model_status_markdown
 from services.voice_profiles import (
     create_voice_profile,
     voice_profile_choices,
@@ -79,24 +74,6 @@ def download_selected_model(model_key: str, source: str, use_hf_mirror: bool) ->
     except Exception as exc:
         return f"下载失败：{exc}\n\n{model_status_markdown()}"
     return f"{message}\n\n{model_status_markdown()}"
-
-
-def refresh_model_dropdown():
-    """刷新模型下载下拉框。
-
-    Gradio 下拉框选项是在页面构建时生成的；运行中修改 models.toml 后，
-    需要点这个按钮才能在当前页面看到新模型。
-    """
-
-    choices = download_choices()
-    value = choices[0][1] if choices else None
-    return gr.update(choices=choices, value=value), selected_model_markdown(value) if value else ""
-
-
-def show_selected_model(model_key: str) -> str:
-    """切换模型时显示下载地址。"""
-
-    return selected_model_markdown(model_key)
 
 
 def model_config_markdown() -> str:
