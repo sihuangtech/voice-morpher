@@ -6,8 +6,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
-from audio import preprocess_audio, probe_audio
-from config import settings
+from core.audio import preprocess_audio, probe_audio
+from core.config import settings
 
 
 PROFILE_FILE = "profile.json"

@@ -3,7 +3,7 @@ from __future__ import annotations
 import numpy as np
 import soundfile as sf
 
-from audio import preprocess_audio, probe_audio
+from core.audio import preprocess_audio, probe_audio
 
 
 def test_preprocess_audio_writes_mono_wav(tmp_path):

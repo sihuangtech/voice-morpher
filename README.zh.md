@@ -210,12 +210,10 @@ uv run python main.py
 ├── docs/
 │   └── TECHNICAL_DESIGN.md
 ├── src/
-│   ├── audio.py
-│   ├── backends.py
-│   ├── config.py
-│   ├── jobs.py
-│   ├── model_downloads.py
-│   └── web.py
+│   ├── backends/
+│   ├── core/
+│   ├── services/
+│   └── ui/
 ├── tests/
 ├── .env.example
 ├── README.md

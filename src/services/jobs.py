@@ -5,10 +5,10 @@ import uuid
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from audio import preprocess_audio, probe_audio
 from backends import ConversionRequest, get_backend
-from config import settings
-from voice_profiles import get_voice_profile
+from core.audio import preprocess_audio, probe_audio
+from core.config import settings
+from services.voice_profiles import get_voice_profile
 
 
 @dataclass

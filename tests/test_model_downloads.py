@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from model_downloads import load_model_catalog
+from services.model_downloads import load_model_catalog
 
 
 def test_model_catalog_loads_from_toml():

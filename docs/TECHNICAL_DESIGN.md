@@ -52,6 +52,23 @@ Apple M2 Max 32GB 适合先跑轻量或中等规模模型。工程上应优先�
 5. 保存 `data/jobs/<job_id>/output.wav`。
 6. 前端播放并下载结果。
 
+## 代码模块边界
+
+项目约定单个 Python 模块尽量不超过 250 行，并按职责拆分：
+
+- `core/audio.py`：音频格式校验、探测、重采样、单声道转换和归一化。
+- `core/config.py`：环境变量和路径配置。
+- `backends/base.py`：后端公共数据结构和基类。
+- `backends/cli.py`：所有命令模板后端，包括 Seed-VC、Qwen3、Chatterbox、F5-TTS、OpenVoice、IndexTTS、XTTS。
+- `backends/cosyvoice.py`：CosyVoice3 内置 Python API 后端，负责懒加载模型。
+- `backends/registry.py`：后端注册表、状态清单和 WebUI 下拉框选项。
+- `backends/__init__.py`：兼容聚合导出层，业务代码统一从这里导入。
+- `services/jobs.py`：一次转换/生成任务的目录创建、音频预处理和后端调用。
+- `services/voice_profiles.py`：音色克隆库，保存 `data/voices/<name>/reference.wav` 和 `profile.json`。
+- `services/model_downloads.py`：读取 `config/models.toml`，下载 Hugging Face / ModelScope 模型。
+- `ui/web.py`：Gradio 页面布局。
+- `ui/handlers.py`：Gradio 事件回调。
+
 ## 后续产品化计划
 
 1. 接入 Seed-VC 本地仓库和权重，完成 Mac CPU/MPS 实测。

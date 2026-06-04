@@ -8,7 +8,7 @@ from typing import Any
 
 from huggingface_hub import snapshot_download
 
-from config import settings
+from core.config import settings
 
 
 @dataclass(frozen=True)
